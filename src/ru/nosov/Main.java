@@ -34,12 +34,20 @@ public class Main {
          *  Замерьте время, которое потрачено на это.
          *  Сравните результаты, предположите, почему они именно такие.
          * */
-        ArrayList<Double> arrayList = addMillionElementsToArrayList();
-        LinkedList<Double> linkedList = addMillionElementsToLinkedList();
-        System.out.println("ArrayList processing time in ns: "
-                + randomTakerFromList(arrayList));
-        System.out.println("LinkedList processing time in ns: "
-                + randomTakerFromList(linkedList) + "\n");
+        ArrayList<Double> arrayList = addMillionElementsToArrayList(1000000);
+        LinkedList<Double> linkedList = addMillionElementsToLinkedList(1000000);
+        System.out.println("ArrayList processing time: "
+                + randomTakerFromList(arrayList, 100000));
+        System.out.println("LinkedList processing time: "
+                + randomTakerFromList(linkedList, 100000) + "\n");
+
+        /*
+        * Выборка значений из ArrayList быстрее, чем в LinkedList.
+        * В LinkedList операции доступа по индексу производятся перебором
+        * с начала или конца (смотря что ближе) до нужного элемента.
+        * А ArrayList - список на основе массива, потому доступ по индексу
+        * отрабатывает быстрее.
+        * */
 
 
         System.out.println("Task3:");
@@ -89,32 +97,35 @@ public class Main {
 
 
     //Task 2
-    public static ArrayList<Double> addMillionElementsToArrayList () {
+    public static ArrayList<Double> addMillionElementsToArrayList (int elements) {
         ArrayList<Double> arrayList = new ArrayList<>();
 
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < elements; i++) {
             arrayList.add(Math.random());
         }
         return arrayList;
     }
 
-    public static LinkedList<Double> addMillionElementsToLinkedList () {
+    public static LinkedList<Double> addMillionElementsToLinkedList (int elements) {
         LinkedList<Double> linkedList = new LinkedList<>();
 
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < elements; i++) {
             linkedList.add(Math.random());
         }
         return linkedList;
     }
 
-    public static long randomTakerFromList (List list) {
+    public static String randomTakerFromList (List list, int iterations) {
         LocalTime startTime = LocalTime.now();
 
-        for (int i = 0; i < 100000; i++) {
-            list.get((int) (Math.random() * 20));
+        for (int i = 0; i < iterations; i++) {
+            list.get((int) (Math.random() * (iterations - 1)));
         }
         LocalTime endTime = LocalTime.now();
-        return endTime.getNano() - startTime.getNano();
+        if ((endTime.getNano() - startTime.getNano() < 0)){
+            return endTime.getSecond() - startTime.getSecond() + " sec";
+        }
+        return endTime.getNano() - startTime.getNano() + " nsec";
     }
 
 
